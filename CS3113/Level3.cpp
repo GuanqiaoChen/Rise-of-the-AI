@@ -19,26 +19,43 @@ void Level3::initialise()
 {
     mGameState.nextSceneID = 0;
 
-    // Create level data 
+    // To avoid memory corruption issues
+    auto setSpan = [&](int row, int c0, int c1, int tileId) {
+        if (LEVEL3_WIDTH <= 0 || LEVEL3_HEIGHT <= 0) return;
+        row = std::max(0, std::min(LEVEL3_HEIGHT - 1, row));
+        if (c0 > c1) std::swap(c0, c1);
+        c0 = std::max(0, c0);
+        c1 = std::min(LEVEL3_WIDTH - 1, c1);
+        for (int c = c0; c <= c1; ++c)
+            mLevelData[row * LEVEL3_WIDTH + c] = tileId;
+    };
+
     for (int i = 0; i < LEVEL3_WIDTH * LEVEL3_HEIGHT; ++i) mLevelData[i] = 0;
 
     if (LEVEL3_WIDTH > 0 && LEVEL3_HEIGHT > 1) {
-        int r0 = LEVEL3_HEIGHT - 1;     
-        int r1 = LEVEL3_HEIGHT - 2;     
-        for (int c = 0; c < LEVEL3_WIDTH; ++c) {
-            mLevelData[r0 * LEVEL3_WIDTH + c] = 9;   
-            mLevelData[r1 * LEVEL3_WIDTH + c] = 10;  
-        }
+        setSpan(LEVEL3_HEIGHT - 1, 0, LEVEL3_WIDTH - 1, 20); 
+        setSpan(LEVEL3_HEIGHT - 2, 0, LEVEL3_WIDTH - 1, 21); 
     }
 
-    int skyRow = std::max(0, LEVEL3_HEIGHT - 9);         
-    int spanW  = std::max(3, LEVEL3_WIDTH / 6);         
-    int c0     = (LEVEL3_WIDTH * 3) / 5;                 
-    int c1     = std::min(LEVEL3_WIDTH - 1, c0 + spanW);
-    c0         = std::min(c0, LEVEL3_WIDTH - 1);        
+    {
+        int y  = std::max(0, LEVEL3_HEIGHT - 7);
+        int w  = std::max(3, LEVEL3_WIDTH / 6);
+        int x0 = LEVEL3_WIDTH / 8;
+        setSpan(y, x0, x0 + w, 22);
+    }
 
-    for (int c = c0; c <= c1; ++c) {
-        mLevelData[skyRow * LEVEL3_WIDTH + c] = 14;     
+    {
+        int y  = std::max(0, LEVEL3_HEIGHT - 6);
+        int w  = std::max(4, LEVEL3_WIDTH / 5);
+        int x0 = std::max(0, (LEVEL3_WIDTH / 2) - (w / 2));
+        setSpan(y, x0, x0 + w, 24);
+    }
+
+    {
+        int y  = std::max(0, LEVEL3_HEIGHT - 9);
+        int w  = std::max(3, LEVEL3_WIDTH / 8);
+        int x0 = (LEVEL3_WIDTH * 3) / 4;
+        setSpan(y, x0, x0 + w, 26);
     }
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
