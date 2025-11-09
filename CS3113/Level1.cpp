@@ -61,7 +61,7 @@ void Level1::initialise()
 
     mGameState.xochitl = new Entity(
         {mOrigin.x - 500.0f, mOrigin.y - 150.0f},
-        {140.0f, 140.0f},
+        {160.0f, 160.0f},
         "assets/game/adventurer_walk_right.png",
         PLAYER
     );
@@ -86,7 +86,7 @@ void Level1::initialise()
 
     mSkeleton = new Entity(
         {mOrigin.x + 200.0f, mOrigin.y - 150.0f},
-        {120.0f, 120.0f},
+        {140.0f, 140.0f},
         "assets/game/skeleton_walk_right.png",
         NPC
     );

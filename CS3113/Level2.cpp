@@ -63,7 +63,7 @@ void Level2::initialise()
 
     mGameState.xochitl = new Entity(
         {mOrigin.x - 500.0f, mOrigin.y - 150.0f},
-        {140.0f, 140.0f},
+        {160.0f, 160.0f},
         "assets/game/adventurer_walk_right.png",
         PLAYER
     );
@@ -88,7 +88,7 @@ void Level2::initialise()
 
     mCat = new Entity(
         {mOrigin.x + 100.0f, mOrigin.y - 150.0f},
-        {80.0f, 80.0f},
+        {90.0f, 90.0f},
         "assets/game/cat_walk_right.png",
         NPC
     );

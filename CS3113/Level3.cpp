@@ -80,7 +80,7 @@ void Level3::initialise()
 
     mGameState.xochitl = new Entity(
         {mOrigin.x - 500.0f, mOrigin.y - 150.0f},
-        {140.0f, 140.0f},
+        {160.0f, 160.0f},
         "assets/game/adventurer_walk_right.png",
         PLAYER
     );

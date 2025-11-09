@@ -14,8 +14,8 @@
 #include "CS3113/Level3.h"
 
 // Global Constants
-constexpr int SCREEN_WIDTH     = 1000,
-              SCREEN_HEIGHT    = 600,
+constexpr int SCREEN_WIDTH     = 2000,
+              SCREEN_HEIGHT    = 1200,
               FPS              = 120,
               NUMBER_OF_LEVELS = 3,
               MAX_LIVES        = 3;
