@@ -19,26 +19,22 @@ void Level1::initialise()
 {
     mGameState.nextSceneID = 0;
 
-    // Create level data - scrolling platformer level
+    // Create level data
     for (int i = 0; i < LEVEL1_WIDTH * LEVEL1_HEIGHT; i++) mLevelData[i] = 0;
 
-    // Ground (two solid rows), use tile id 1
     for (int c = 0; c < LEVEL1_WIDTH; ++c) {
         mLevelData[(LEVEL1_HEIGHT - 1) * LEVEL1_WIDTH + c] = 1;
         mLevelData[(LEVEL1_HEIGHT - 2) * LEVEL1_WIDTH + c] = 1;
     }
     
-    // Left stairs (tile id 3 for variety)
     for (int i = 0; i < 4; ++i) {
         for (int c = 4 + i; c <= 6 + i; ++c)
             mLevelData[(LEVEL1_HEIGHT - 4 - i) * LEVEL1_WIDTH + c] = 3;
     }
     
-    // Mid platform (tile id 5)
     for (int c = 16; c <= 20; ++c)
         mLevelData[(LEVEL1_HEIGHT - 6) * LEVEL1_WIDTH + c] = 5;
     
-    // Small overhang (tile id 7) — jump under it
     for (int c = 24; c <= 27; ++c)
         mLevelData[(LEVEL1_HEIGHT - 9) * LEVEL1_WIDTH + c] = 7;
 
@@ -48,24 +44,19 @@ void Level1::initialise()
 
     mGameState.jumpSound = LoadSound("assets/game/player_jump_sound.wav");
 
-    /*
-      ----------- MAP -----------
-    */
     mGameState.map = new Map(
         LEVEL1_WIDTH, LEVEL1_HEIGHT,
         (unsigned int *) mLevelData,
         "assets/game/tilemap.png",
         TILE_DIMENSION,
-        16, 7,  // 16 columns, 7 rows
+        16, 7,  
         mOrigin
     );
 
-    /*
-      ----------- PLAYER -----------
-    */
+
     std::map<Direction, std::vector<int>> adventurerAnimationAtlas = {
-        {LEFT,  {0, 1, 2, 3, 4, 5, 6, 7}},  // 1x8 sprite sheet
-        {RIGHT, {0, 1, 2, 3, 4, 5, 6, 7}}   // 1x8 sprite sheet
+        {LEFT,  {0, 1, 2, 3, 4, 5, 6, 7}},  
+        {RIGHT, {0, 1, 2, 3, 4, 5, 6, 7}}   
     };
 
     mGameState.xochitl = new Entity(
@@ -78,22 +69,19 @@ void Level1::initialise()
         "assets/game/adventurer_walk_left.png",
         "assets/game/adventurer_walk_right.png",
         ATLAS,
-        {1.0f, 8.0f}  // 8 columns, 1 row
+        {1.0f, 8.0f}  
     );
     mGameState.xochitl->setAnimationAtlas(adventurerAnimationAtlas);
-    mGameState.xochitl->setDirection(RIGHT); // Initialize animation indices
+    mGameState.xochitl->setDirection(RIGHT); 
     mGameState.xochitl->setFrameSpeed(Entity::DEFAULT_FRAME_SPEED);
     mGameState.xochitl->setJumpingPower(550.0f);
     mGameState.xochitl->setColliderDimensions({80.0f, 80.0f});
     mGameState.xochitl->setAcceleration({0.0f, ACCELERATION_OF_GRAVITY});
     mGameState.xochitl->setSpeed(200);
 
-    /*
-      ----------- SKELETON AI (WANDERER) -----------
-    */
     std::map<Direction, std::vector<int>> skeletonAnimationAtlas = {
-        {LEFT,  {0, 1, 2, 3, 4, 5}},  // 1x6 sprite sheet
-        {RIGHT, {0, 1, 2, 3, 4, 5}}   // 1x6 sprite sheet
+        {LEFT,  {0, 1, 2, 3, 4, 5}},  
+        {RIGHT, {0, 1, 2, 3, 4, 5}}   
     };
 
     mSkeleton = new Entity(
@@ -106,10 +94,10 @@ void Level1::initialise()
         "assets/game/skeleton_walk_left.png",
         "assets/game/skeleton_walk_right.png",
         ATLAS,
-        {1.0f, 6.0f}  // 6 columns, 1 row
+        {1.0f, 6.0f} 
     );
     mSkeleton->setAnimationAtlas(skeletonAnimationAtlas);
-    mSkeleton->setDirection(LEFT); // Initialize animation indices
+    mSkeleton->setDirection(LEFT); 
     mSkeleton->setFrameSpeed(Entity::DEFAULT_FRAME_SPEED);
     mSkeleton->setAIType(WANDERER);
     mSkeleton->setAIState(WALKING);
@@ -117,9 +105,6 @@ void Level1::initialise()
     mSkeleton->setAcceleration({0.0f, ACCELERATION_OF_GRAVITY});
     mSkeleton->setColliderDimensions({15.0f, 15.0f});
 
-    /*
-      ----------- CAMERA -----------
-    */
     mGameState.camera = { 0 };
     mGameState.camera.target = mGameState.xochitl->getPosition();
     mGameState.camera.offset = mOrigin;
@@ -149,17 +134,17 @@ void Level1::update(float deltaTime)
         0
     );
 
-    // Check collision with AI (from player's perspective)
+    // Check collision with AI
     if (mGameState.xochitl->checkCollisionWithAI(mSkeleton))
     {
-        // Player loses a life - handled in main.cpp
-        mGameState.nextSceneID = -1; // Signal to lose a life
+        // Player loses a life 
+        mGameState.nextSceneID = -1; 
     }
 
     // Check if player reached end of level
     if (mGameState.xochitl->getPosition().x > mOrigin.x + 800.0f)
     {
-        mGameState.nextSceneID = 2; // Go to Level 2
+        mGameState.nextSceneID = 2; 
     }
 
     // Camera follows player

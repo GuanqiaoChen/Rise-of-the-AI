@@ -36,7 +36,7 @@ Level2 *gLevel2 = nullptr;
 Level3 *gLevel3 = nullptr;
 
 int gLives = MAX_LIVES;
-int gCurrentLevel = 0; // 0 = menu, 1 = level1, 2 = level2, 3 = level3
+int gCurrentLevel = 0; 
 bool gGameWon = false;
 bool gGameLost = false;
 
@@ -67,8 +67,6 @@ void resetGame()
 {
     gLives = MAX_LIVES;
     gCurrentLevel = 0;
-    // gGameWon = false;
-    // gGameLost = false;
     switchToScene(gMenuScene);
 }
 
@@ -118,13 +116,6 @@ void processInput()
         gCurrentScene->getState().xochitl->jump();
         PlaySound(gJumpSound);
     }
-
-    // Play walk sound
-    // if (isWalking && !gWasWalking && gCurrentScene->getState().xochitl->isCollidingBottom())
-    // {
-    //     PlaySound(gWalkSound);
-    // }
-    // gWasWalking = isWalking;
 
     if (GetLength(gCurrentScene->getState().xochitl->getMovement()) > 1.0f) 
         gCurrentScene->getState().xochitl->normaliseMovement();
@@ -241,20 +232,9 @@ void update()
             }
         }
     }
-    // if (gCurrentLevel == 0 && (gGameWon || gGameLost))
-    // {
-    //     // Use frame time to keep it simple here
-    //     gOutcomeTimer += GetFrameTime();
-    //     if (gOutcomeTimer >= OUTCOME_DELAY)
-    //     {
-    //         gGameWon  = false;
-    //         gGameLost = false;
-    //         gOutcomeTimer = 0.0f;
-    //     }
-    // }
+
     if (gCurrentLevel == 0 && (gGameWon || gGameLost))
     {
-        // Advance by the exact simulated time we just processed
         gOutcomeTimer += stepsThisFrame * FIXED_TIMESTEP;
 
         if (gOutcomeTimer >= OUTCOME_DELAY)
@@ -275,7 +255,7 @@ void render()
         // Menu rendering
         gCurrentScene->render();
         
-        // Show win/lose message if applicable
+        // Show win/lose message
         if (gGameWon)
         {
             const char* message = "You Win!";

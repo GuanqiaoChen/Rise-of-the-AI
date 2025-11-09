@@ -35,7 +35,7 @@ void MenuScene::render()
 {
     ClearBackground(ColorFromHex(mBGColourHexCode));
     
-    const char* gameTitle = "Adventure Quest";
+    const char* gameTitle = "Adventure";
     const char* instruction = "Press Enter to Start";
     
     int titleFontSize = 60;

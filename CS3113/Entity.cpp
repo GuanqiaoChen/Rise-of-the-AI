@@ -56,20 +56,14 @@ void Entity::checkCollisionY(Entity *collidableEntities, int collisionCheckCount
 {
     for (int i = 0; i < collisionCheckCount; i++)
     {
-        // STEP 1: For every entity that our player can collide with...
         Entity *collidableEntity = &collidableEntities[i];
         
         if (isColliding(collidableEntity))
         {
-            // STEP 2: Calculate the distance between its centre and our centre
-            //         and use that to calculate the amount of overlap between
-            //         both bodies.
             float yDistance = fabs(mPosition.y - collidableEntity->mPosition.y);
             float yOverlap  = fabs(yDistance - (mColliderDimensions.y / 2.0f) - 
                               (collidableEntity->mColliderDimensions.y / 2.0f));
-            
-            // STEP 3: "Unclip" ourselves from the other entity, and zero our
-            //         vertical velocity.
+
             if (mVelocity.y > 0) 
             {
                 mPosition.y -= yOverlap;
@@ -96,15 +90,9 @@ void Entity::checkCollisionX(Entity *collidableEntities, int collisionCheckCount
         
         if (isColliding(collidableEntity))
         {            
-            // When standing on a platform, we're always slightly overlapping
-            // it vertically due to gravity, which causes false horizontal
-            // collision detections. So the solution I dound is only resolve X
-            // collisions if there's significant Y overlap, preventing the 
-            // platform we're standing on from acting like a wall.
             float yDistance = fabs(mPosition.y - collidableEntity->mPosition.y);
             float yOverlap  = fabs(yDistance - (mColliderDimensions.y / 2.0f) - (collidableEntity->mColliderDimensions.y / 2.0f));
 
-            // Skip if barely touching vertically (standing on platform)
             if (yOverlap < Y_COLLISION_THRESHOLD) continue;
 
             float xDistance = fabs(mPosition.x - collidableEntity->mPosition.x);
@@ -114,13 +102,11 @@ void Entity::checkCollisionX(Entity *collidableEntities, int collisionCheckCount
                 mPosition.x     -= xOverlap;
                 mVelocity.x      = 0;
 
-                // Collision!
                 mIsCollidingRight = true;
             } else if (mVelocity.x < 0) {
                 mPosition.x    += xOverlap;
                 mVelocity.x     = 0;
  
-                // Collision!
                 mIsCollidingLeft = true;
             }
         }
@@ -142,22 +128,20 @@ void Entity::checkCollisionY(Map *map)
     float xOverlap = 0.0f;
     float yOverlap = 0.0f;
 
-    // COLLISION ABOVE (jumping upward)
     if ((map->isSolidTileAt(topCentreProbe, &xOverlap, &yOverlap) ||
          map->isSolidTileAt(topLeftProbe, &xOverlap, &yOverlap)   ||
          map->isSolidTileAt(topRightProbe, &xOverlap, &yOverlap)) && mVelocity.y < 0.0f)
     {
-        mPosition.y += yOverlap;   // push down
+        mPosition.y += yOverlap;   
         mVelocity.y  = 0.0f;
         mIsCollidingTop = true;
     }
 
-    // COLLISION BELOW (falling downward)
     if ((map->isSolidTileAt(bottomCentreProbe, &xOverlap, &yOverlap) ||
          map->isSolidTileAt(bottomLeftProbe, &xOverlap, &yOverlap)   ||
          map->isSolidTileAt(bottomRightProbe, &xOverlap, &yOverlap)) && mVelocity.y > 0.0f)
     {
-        mPosition.y -= yOverlap;   // push up
+        mPosition.y -= yOverlap;   
         mVelocity.y  = 0.0f;
         mIsCollidingBottom = true;
     } 
@@ -174,20 +158,18 @@ void Entity::checkCollisionX(Map *map)
     float xOverlap = 0.0f;
     float yOverlap = 0.0f;
 
-    // COLLISION ON RIGHT (moving right)
     if (map->isSolidTileAt(rightCentreProbe, &xOverlap, &yOverlap) 
          && mVelocity.x > 0.0f && yOverlap >= 0.5f)
     {
-        mPosition.x -= xOverlap * 1.01f;   // push left
+        mPosition.x -= xOverlap * 1.01f;  
         mVelocity.x  = 0.0f;
         mIsCollidingRight = true;
     }
 
-    // COLLISION ON LEFT (moving left)
     if (map->isSolidTileAt(leftCentreProbe, &xOverlap, &yOverlap) 
          && mVelocity.x < 0.0f && yOverlap >= 0.5f)
     {
-        mPosition.x += xOverlap * 1.01;   // push right
+        mPosition.x += xOverlap * 1.01;   
         mVelocity.x  = 0.0f;
         mIsCollidingLeft = true;
     }
@@ -238,7 +220,7 @@ void Entity::animate(float deltaTime)
     bool shouldAnimate = movingHoriz || (mAIType == FLYER && movingVert);
 
     if (!shouldAnimate) {
-        // Idle frame (first frame of the current facing direction)
+        // Idle frame
         mCurrentFrameIndex = 0;
         mAnimationTime = 0.0f;
         return;
@@ -258,8 +240,6 @@ void Entity::animate(float deltaTime)
 
 void Entity::AIWander() 
 { 
-    // Simple wanderer - moves left by default
-    // Will be stopped by collision detection when hitting walls
     moveLeft();
 }
 
@@ -273,8 +253,6 @@ void Entity::AIFollow(Entity *target)
         break;
 
     case WALKING:
-        // Depending on where the player is in respect to their x-position
-        // Change direction of the enemy
         if (mPosition.x > target->getPosition().x) moveLeft();
         else                                       moveRight();
     
@@ -285,22 +263,18 @@ void Entity::AIFollow(Entity *target)
 
 void Entity::AIFly(Entity *target)
 {
-    // Flyer moves towards player in both X and Y directions
     float distance = Vector2Distance(mPosition, target->getPosition());
     
     if (distance < 400.0f)
     {
-        // Move towards player
         if (mPosition.x > target->getPosition().x) moveLeft();
         else moveRight();
         
-        // Also move vertically towards player
         if (mPosition.y > target->getPosition().y) moveUp();
         else moveDown();
     }
     else
     {
-        // Wander if player is far
         moveLeft();
     }
 }
@@ -341,20 +315,16 @@ void Entity::update(float deltaTime, Entity *player, Map *map,
         mVelocity.y = mMovement.y * mSpeed;
     }
 
-    // Only apply gravity if not a flyer
     if (mAIType != FLYER)
     {
         mVelocity.x += mAcceleration.x * deltaTime;
         mVelocity.y += mAcceleration.y * deltaTime;
     }
 
-    // ––––– JUMPING ––––– //
     if (mIsJumping)
     {
-        // STEP 1: Immediately return the flag to its original false state
         mIsJumping = false;
         
-        // STEP 2: The player now acquires an upward velocity
         mVelocity.y -= mJumpingPower;
     }
 
@@ -372,10 +342,8 @@ void Entity::update(float deltaTime, Entity *player, Map *map,
         checkCollisionX(map);
     }
 
-    // Animate if using ATLAS texture
     if (mTextureType == ATLAS && !mAnimationIndices.empty()) 
     {
-        // Always animate if on ground (for walking animations) or if flyer
         if (mAIType == FLYER || mIsCollidingBottom || GetLength(mMovement) != 0)
             animate(deltaTime);
     }
@@ -387,7 +355,6 @@ void Entity::render()
 
     Texture2D textureToUse = mTexture;
     
-    // Use separate left/right textures if available
     if (mHasSeparateTextures)
     {
         if (mDirection == LEFT)
@@ -396,7 +363,6 @@ void Entity::render()
             textureToUse = mTextureRight;
     }
 
-    // Safety check: if texture is invalid, don't render
     if (textureToUse.id == 0) return;
 
     Rectangle textureArea;
@@ -404,12 +370,11 @@ void Entity::render()
     switch (mTextureType)
     {
         case SINGLE:
-            // Whole texture (UV coordinates)
             textureArea = {
                 // top-left corner
                 0.0f, 0.0f,
 
-                // bottom-right corner (of texture)
+                // bottom-right corner
                 static_cast<float>(textureToUse.width),
                 static_cast<float>(textureToUse.height)
             };
@@ -418,7 +383,6 @@ void Entity::render()
             // Check if animation indices are valid
             if (mAnimationIndices.empty() || mCurrentFrameIndex >= mAnimationIndices.size())
             {
-                // Fallback: render first frame of sprite sheet
                 textureArea = getUVRectangle(
                     &textureToUse, 
                     0, 
