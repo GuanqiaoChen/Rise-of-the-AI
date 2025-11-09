@@ -41,7 +41,6 @@ void Level1::initialise()
     // Small overhang (tile id 7) — jump under it
     for (int c = 24; c <= 27; ++c)
         mLevelData[(LEVEL1_HEIGHT - 9) * LEVEL1_WIDTH + c] = 7;
-    
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
     SetMusicVolume(mGameState.bgm, 0.5f);

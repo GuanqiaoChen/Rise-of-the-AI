@@ -45,6 +45,9 @@ Sound gJumpSound;
 Sound gDeathSound;
 bool gWasWalking = false;
 
+static float gOutcomeTimer = 0.0f;
+static const float OUTCOME_DELAY = 2.0f;
+
 // Function Declarations
 void switchToScene(Scene *scene);
 void initialise();
@@ -64,8 +67,8 @@ void resetGame()
 {
     gLives = MAX_LIVES;
     gCurrentLevel = 0;
-    gGameWon = false;
-    gGameLost = false;
+    // gGameWon = false;
+    // gGameLost = false;
     switchToScene(gMenuScene);
 }
 
@@ -149,6 +152,8 @@ void update()
         deltaTime -= FIXED_TIMESTEP;
     }
 
+    int stepsThisFrame = 0;
+
     if (gCurrentLevel != 0)
     {
         Entity* player = gCurrentScene->getState().xochitl;
@@ -182,7 +187,9 @@ void update()
             
             if (gLives <= 0)
             {
+                if (IsSoundPlaying(gWalkSound)) StopSound(gWalkSound);
                 gGameLost = true;
+                gOutcomeTimer = 0.0f;
                 resetGame();
             }
             else
@@ -204,7 +211,9 @@ void update()
         }
         else if (nextSceneID == -2) // Player won
         {
+            if (IsSoundPlaying(gWalkSound)) StopSound(gWalkSound);
             gGameWon = true;
+            gOutcomeTimer = 0.0f;
             resetGame();
         }
         else if (nextSceneID == 1 && gCurrentLevel == 0) // Start game from menu
@@ -230,6 +239,29 @@ void update()
                     switchToScene(gLevel3);
                     break;
             }
+        }
+    }
+    // if (gCurrentLevel == 0 && (gGameWon || gGameLost))
+    // {
+    //     // Use frame time to keep it simple here
+    //     gOutcomeTimer += GetFrameTime();
+    //     if (gOutcomeTimer >= OUTCOME_DELAY)
+    //     {
+    //         gGameWon  = false;
+    //         gGameLost = false;
+    //         gOutcomeTimer = 0.0f;
+    //     }
+    // }
+    if (gCurrentLevel == 0 && (gGameWon || gGameLost))
+    {
+        // Advance by the exact simulated time we just processed
+        gOutcomeTimer += stepsThisFrame * FIXED_TIMESTEP;
+
+        if (gOutcomeTimer >= OUTCOME_DELAY)
+        {
+            gGameWon = false;
+            gGameLost = false;
+            gOutcomeTimer = 0.0f;
         }
     }
 }

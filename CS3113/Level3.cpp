@@ -117,7 +117,7 @@ void Level3::initialise()
     mDemon->setAIState(WALKING);
     mDemon->setSpeed(120);
     mDemon->setAcceleration({0.0f, 0.0f}); // No gravity for flyer
-    mDemon->setColliderDimensions({70.0f, 70.0f});
+    mDemon->setColliderDimensions({50.0f, 50.0f});
 
     /*
       ----------- CAMERA -----------

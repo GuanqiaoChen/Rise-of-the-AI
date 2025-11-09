@@ -42,7 +42,6 @@ void Level2::initialise()
     for (int c = c0; c <= c1; ++c) {
         mLevelData[skyRow * LEVEL2_WIDTH + c] = 14;      // pick a distinct tile
     }
-    
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
     SetMusicVolume(mGameState.bgm, 0.5f);
