@@ -20,22 +20,26 @@ void Level3::initialise()
     
     // Three towers (tile 22)
     for (int r = LEVEL3_HEIGHT - 3; r >= LEVEL3_HEIGHT - 10; --r) {
-        mLevelData[r * LEVEL3_WIDTH + 6]  = 22;
-        mLevelData[r * LEVEL3_WIDTH + 18] = 22;
-        mLevelData[r * LEVEL3_WIDTH + 30] = 22;
+        if (6 < LEVEL3_WIDTH)  mLevelData[r * LEVEL3_WIDTH + 6]  = 22;
+        if (18 < LEVEL3_WIDTH) mLevelData[r * LEVEL3_WIDTH + 18] = 22;
+        if (30 < LEVEL3_WIDTH) mLevelData[r * LEVEL3_WIDTH + 30] = 22;
     }
     
     // Bridges between towers (tile 24)
     for (int c = 7; c <= 18; ++c)
-        mLevelData[(LEVEL3_HEIGHT - 10) * LEVEL3_WIDTH + c] = 24;
+        if (c < LEVEL3_WIDTH)
+            mLevelData[(LEVEL3_HEIGHT - 10) * LEVEL3_WIDTH + c] = 24;
     for (int c = 19; c <= 30; ++c)
-        mLevelData[(LEVEL3_HEIGHT - 12) * LEVEL3_WIDTH + c] = 24;
+        if (c < LEVEL3_WIDTH)
+            mLevelData[(LEVEL3_HEIGHT - 12) * LEVEL3_WIDTH + c] = 24;
     
     // Small high islands (tile 26)
     for (int c = 12; c <= 14; ++c)
-        mLevelData[(LEVEL3_HEIGHT - 15) * LEVEL3_WIDTH + c] = 26;
+        if (c < LEVEL3_WIDTH)
+            mLevelData[(LEVEL3_HEIGHT - 15) * LEVEL3_WIDTH + c] = 26;
     for (int c = 25; c <= 27; ++c)
-        mLevelData[(LEVEL3_HEIGHT - 16) * LEVEL3_WIDTH + c] = 26;
+        if (c < LEVEL3_WIDTH)
+            mLevelData[(LEVEL3_HEIGHT - 16) * LEVEL3_WIDTH + c] = 26;
     
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");

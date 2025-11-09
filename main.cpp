@@ -139,17 +139,21 @@ void update()
         deltaTime -= FIXED_TIMESTEP;
     }
 
+    if (gCurrentLevel != 0)
     {
         Entity* player = gCurrentScene->getState().xochitl;
         const float EPS = 1e-2f;
-    
-        bool grounded = player->isCollidingBottom();
-        bool movingX  = fabsf(player->getVelocity().x) > EPS;
-    
-        if (grounded && movingX) {
-            if (!IsSoundPlaying(gWalkSound)) PlaySound(gWalkSound);
-        } else {
-            if (IsSoundPlaying(gWalkSound))  StopSound(gWalkSound);
+        
+        if (player != nullptr) 
+        {
+            bool grounded = player->isCollidingBottom();
+            bool movingX  = fabsf(player->getVelocity().x) > EPS;
+        
+            if (grounded && movingX) {
+                if (!IsSoundPlaying(gWalkSound)) PlaySound(gWalkSound);
+            } else {
+                if (IsSoundPlaying(gWalkSound))  StopSound(gWalkSound);
+            }
         }
     }
 

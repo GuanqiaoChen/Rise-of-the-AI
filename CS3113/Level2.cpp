@@ -30,10 +30,13 @@ void Level2::initialise()
         mLevelData[(LEVEL2_HEIGHT - 7) * LEVEL2_WIDTH + c] = 12;
 
     // A couple of small islands 
+    // A couple of small islands (guard against columns outside the map width)
     for (int c = 34; c <= 36; ++c)
-        mLevelData[(LEVEL2_HEIGHT - 8) * LEVEL2_WIDTH + c] = 14;
+        if (c < LEVEL2_WIDTH)
+            mLevelData[(LEVEL2_HEIGHT - 8) * LEVEL2_WIDTH + c] = 14;
     for (int c = 42; c <= 44; ++c)
-        mLevelData[(LEVEL2_HEIGHT - 6) * LEVEL2_WIDTH + c] = 14;
+        if (c < LEVEL2_WIDTH)
+            mLevelData[(LEVEL2_HEIGHT - 6) * LEVEL2_WIDTH + c] = 14;
     
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
