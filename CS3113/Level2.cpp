@@ -10,33 +10,28 @@ void Level2::initialise()
     mGameState.nextSceneID = 0;
 
     // Create level data - different layout for level 2
-    for (int i = 0; i < LEVEL2_WIDTH * LEVEL2_HEIGHT; i++) mLevelData[i] = 0;
+    for (int i = 0; i < LEVEL2_WIDTH * LEVEL2_HEIGHT; ++i) mLevelData[i] = 0;
 
-    // Gentle double ground (tile ids 9/10), with *small* occasional gaps
-    for (int c = 0; c < LEVEL2_WIDTH; ++c) {
-        // keep gaps rare and short
-        bool gap = (c % 14 == 6); // single-tile gap every ~14 tiles
-        if (gap) continue;
-        mLevelData[(LEVEL2_HEIGHT - 1) * LEVEL2_WIDTH + c] = 9;
-        mLevelData[(LEVEL2_HEIGHT - 2) * LEVEL2_WIDTH + c] = 10;
+    // 1) Flat ground (two rows) across the whole width
+    if (LEVEL2_WIDTH > 0 && LEVEL2_HEIGHT > 1) {
+        int r0 = LEVEL2_HEIGHT - 1;     // bottom row
+        int r1 = LEVEL2_HEIGHT - 2;     // just above bottom
+        for (int c = 0; c < LEVEL2_WIDTH; ++c) {
+            mLevelData[r0 * LEVEL2_WIDTH + c] = 9;   // choose any solid tile
+            mLevelData[r1 * LEVEL2_WIDTH + c] = 10;  // another solid tile
+        }
     }
 
-    // Low mid ledge stripe 
-    for (int c = 6; c <= 14; ++c)
-        mLevelData[(LEVEL2_HEIGHT - 6) * LEVEL2_WIDTH + c] = 12;
+    // 2) One sky platform (cat’s perch), safely clamped to map size
+    int skyRow = std::max(0, LEVEL2_HEIGHT - 9);         // high but safe
+    int spanW  = std::max(3, LEVEL2_WIDTH / 6);          // platform width
+    int c0     = (LEVEL2_WIDTH * 3) / 5;                 // start near 60% of map
+    int c1     = std::min(LEVEL2_WIDTH - 1, c0 + spanW);
+    c0         = std::min(c0, LEVEL2_WIDTH - 1);         // clamp start
 
-    // Another low stripe later
-    for (int c = 20; c <= 28; ++c)
-        mLevelData[(LEVEL2_HEIGHT - 7) * LEVEL2_WIDTH + c] = 12;
-
-    // A couple of small islands 
-    // A couple of small islands (guard against columns outside the map width)
-    for (int c = 34; c <= 36; ++c)
-        if (c < LEVEL2_WIDTH)
-            mLevelData[(LEVEL2_HEIGHT - 8) * LEVEL2_WIDTH + c] = 14;
-    for (int c = 42; c <= 44; ++c)
-        if (c < LEVEL2_WIDTH)
-            mLevelData[(LEVEL2_HEIGHT - 6) * LEVEL2_WIDTH + c] = 14;
+    for (int c = c0; c <= c1; ++c) {
+        mLevelData[skyRow * LEVEL2_WIDTH + c] = 14;      // pick a distinct tile
+    }
     
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
@@ -110,9 +105,9 @@ void Level2::initialise()
     mCat->setFrameSpeed(Entity::DEFAULT_FRAME_SPEED);
     mCat->setAIType(FOLLOWER);
     mCat->setAIState(IDLE);
-    mCat->setSpeed(150);
+    mCat->setSpeed(85);
     mCat->setAcceleration({0.0f, ACCELERATION_OF_GRAVITY});
-    mCat->setColliderDimensions({70.0f, 70.0f});
+    mCat->setColliderDimensions({15.0f, 15.0f});
 
     /*
       ----------- CAMERA -----------

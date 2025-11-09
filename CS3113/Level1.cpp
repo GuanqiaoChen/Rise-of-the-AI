@@ -106,7 +106,7 @@ void Level1::initialise()
     mSkeleton->setAIState(WALKING);
     mSkeleton->setSpeed(100);
     mSkeleton->setAcceleration({0.0f, ACCELERATION_OF_GRAVITY});
-    mSkeleton->setColliderDimensions({70.0f, 70.0f});
+    mSkeleton->setColliderDimensions({15.0f, 15.0f});
 
     /*
       ----------- CAMERA -----------

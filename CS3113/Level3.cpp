@@ -10,36 +10,28 @@ void Level3::initialise()
     mGameState.nextSceneID = 0;
 
     // Create level data - final level
-    for (int i = 0; i < LEVEL3_WIDTH * LEVEL3_HEIGHT; i++) mLevelData[i] = 0;
+    for (int i = 0; i < LEVEL3_WIDTH * LEVEL3_HEIGHT; ++i) mLevelData[i] = 0;
 
-    // Solid bedrock (tile 20)
-    for (int c = 0; c < LEVEL3_WIDTH; ++c) {
-        mLevelData[(LEVEL3_HEIGHT - 1) * LEVEL3_WIDTH + c] = 20;
-        mLevelData[(LEVEL3_HEIGHT - 2) * LEVEL3_WIDTH + c] = 20;
+    // 1) Flat ground (two rows) across the whole width
+    if (LEVEL3_WIDTH > 0 && LEVEL3_HEIGHT > 1) {
+        int r0 = LEVEL3_HEIGHT - 1;     // bottom row
+        int r1 = LEVEL3_HEIGHT - 2;     // just above bottom
+        for (int c = 0; c < LEVEL3_WIDTH; ++c) {
+            mLevelData[r0 * LEVEL3_WIDTH + c] = 9;   // choose any solid tile
+            mLevelData[r1 * LEVEL3_WIDTH + c] = 10;  // another solid tile
+        }
     }
-    
-    // Three towers (tile 22)
-    for (int r = LEVEL3_HEIGHT - 3; r >= LEVEL3_HEIGHT - 10; --r) {
-        if (6 < LEVEL3_WIDTH)  mLevelData[r * LEVEL3_WIDTH + 6]  = 22;
-        if (18 < LEVEL3_WIDTH) mLevelData[r * LEVEL3_WIDTH + 18] = 22;
-        if (30 < LEVEL3_WIDTH) mLevelData[r * LEVEL3_WIDTH + 30] = 22;
+
+    // 2) One sky platform (cat’s perch), safely clamped to map size
+    int skyRow = std::max(0, LEVEL3_HEIGHT - 9);         // high but safe
+    int spanW  = std::max(3, LEVEL3_WIDTH / 6);          // platform width
+    int c0     = (LEVEL3_WIDTH * 3) / 5;                 // start near 60% of map
+    int c1     = std::min(LEVEL3_WIDTH - 1, c0 + spanW);
+    c0         = std::min(c0, LEVEL3_WIDTH - 1);         // clamp start
+
+    for (int c = c0; c <= c1; ++c) {
+        mLevelData[skyRow * LEVEL3_WIDTH + c] = 14;      // pick a distinct tile
     }
-    
-    // Bridges between towers (tile 24)
-    for (int c = 7; c <= 18; ++c)
-        if (c < LEVEL3_WIDTH)
-            mLevelData[(LEVEL3_HEIGHT - 10) * LEVEL3_WIDTH + c] = 24;
-    for (int c = 19; c <= 30; ++c)
-        if (c < LEVEL3_WIDTH)
-            mLevelData[(LEVEL3_HEIGHT - 12) * LEVEL3_WIDTH + c] = 24;
-    
-    // Small high islands (tile 26)
-    for (int c = 12; c <= 14; ++c)
-        if (c < LEVEL3_WIDTH)
-            mLevelData[(LEVEL3_HEIGHT - 15) * LEVEL3_WIDTH + c] = 26;
-    for (int c = 25; c <= 27; ++c)
-        if (c < LEVEL3_WIDTH)
-            mLevelData[(LEVEL3_HEIGHT - 16) * LEVEL3_WIDTH + c] = 26;
     
 
     mGameState.bgm = LoadMusicStream("assets/game/looped_background_music.wav");
